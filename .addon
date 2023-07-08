@@ -1,0 +1,19 @@
+{
+  "Title": "Simple Parallax Occlusion Example",
+  "Type": "content",
+  "Org": "local",
+  "Ident": "sbox-raymarch-pom",
+  "Tags": "",
+  "Schema": 1,
+  "HasAssets": true,
+  "AssetsPath": "",
+  "Resources": null,
+  "MenuResources": null,
+  "HasCode": false,
+  "CodePath": "",
+  "PackageReferences": [],
+  "EditorReferences": null,
+  "Metadata": {
+    "ProjectTemplate": null
+  }
+}

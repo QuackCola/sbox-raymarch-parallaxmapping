@@ -1,0 +1,11 @@
+# This file describes files and paths that should not be tracked by Git version control
+# https://git-scm.com/docs/gitignore
+
+# Asset party thumbnail
+thumb.png
+
+# Auto-generated asset related files
+*.generated.*
+*.*_c
+*.los
+*.vpk
