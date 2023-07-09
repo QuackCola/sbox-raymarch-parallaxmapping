@@ -106,7 +106,7 @@ PS
 	// Functions
 	//
 
-	// TODO : Figure out whats cuasing the warping when the camera ( aka player ) gets close to the effect surface. And if its avoidable.
+	// TODO : Figure out what's causing the warping when the camera ( aka player ) gets close to the effect surface.
 
 	float3 GetTangentViewVector( PixelInput i )
 	{
