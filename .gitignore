@@ -4,6 +4,9 @@
 # Asset party thumbnail
 thumb.png
 
+# Folders
+*_bakeresourcecache
+
 # Auto-generated asset related files
 *.generated.*
 *.*_c
