@@ -3,7 +3,7 @@
 //=========================================================================================================================
 HEADER
 {
-	Description = "Basic Example Parallax Occlusion Shader";
+	Description = "Basic Example Parallax Mapping Shader";
 }
 
 MODES
@@ -20,7 +20,6 @@ MODES
 FEATURES
 {
     #include "common/features.hlsl"
-	//Feature(F_OUTPUT_TO_ALBEDO, 0..1, "Rendering");
 }
 
 //=========================================================================================================================
@@ -78,14 +77,6 @@ VS
 
 PS
 {
-
-	//
-	// Combos
-	//
-	//StaticCombo( S_OUTPUT_TO_ALBEDO, F_OUTPUT_TO_ALBEDO, Sys( ALL ) );
-
-	// -------------------------------------------------------------------------------------------------------------------------------------------------------------
-
 	//
 	// Includes
 	//
