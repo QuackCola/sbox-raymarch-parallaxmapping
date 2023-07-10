@@ -3,7 +3,7 @@
 //=========================================================================================================================
 HEADER
 {
-	Description = "Basic Example Parallax Mapping Shader";
+	Description = "Basic Parallax Mapping Shader Example ";
 }
 
 MODES
@@ -112,7 +112,7 @@ PS
 		return vTangentViewVector;
 	}
 
-	float3 Raymarch(float2 vUV, float3 vViewDir, float3 vInputTex)
+	float3 ParallaxRaymarching(float2 vUV, float3 vViewDir, float3 vInputTex)
 	{
 		//float vRaystep = vViewDir * -1;
 		// g_vSlices is the number of slices. Default is 25.0 
@@ -124,10 +124,13 @@ PS
 			{
 				// red value will increase with each slice.
 				return float3(i,0,0);
+
+				// greyscale value will increase with each slice
+				//return float3(i,i,i);
 			}
 
-				vUV += vViewDir * g_vSliceDistance;
-    			vInputTex = Tex2DS(g_tHeightMap,g_sHeightSampler,vUV.xy);
+			vUV += vViewDir * g_vSliceDistance;
+			vInputTex = Tex2DS(g_tHeightMap,g_sHeightSampler,vUV.xy);
 		}
 
 		// Raymarch Result
@@ -164,7 +167,7 @@ PS
 		float3 vTangentViewDir = GetTangentViewVector(i);
 		
 		// Result 
-		m.Emission = Raymarch(vUV,vTangentViewDir,vInputTex) * g_vEmissionStrength;
+		m.Emission = ParallaxRaymarching(vUV,vTangentViewDir,vInputTex) * g_vEmissionStrength;
 
 		// make sure we are able to see the result in the editor when in fullbright or ingame when mat_fullbright is set to 1.
 		#if S_MODE_TOOLS_VIS
