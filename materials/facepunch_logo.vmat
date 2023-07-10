@@ -8,7 +8,7 @@ Layer0
 	g_bFogEnabled "1"
 
 	//---- Height ----
-	Height "textures/vertical_01_height.psd"
+	Height "textures/facepunch_logo_height.psd"
 
 	//---- Variables ----
 	g_vEmissionStrength "0.100"

@@ -18,6 +18,8 @@ Layer0
 
 	DynamicParams
 	{
+		g_vSliceDistance "slicedistance"
+		g_vSlices "sliceamount"
 		g_vTexCoordScale "texcordscale"
 	}
 }

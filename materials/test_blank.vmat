@@ -15,4 +15,11 @@ Layer0
 	g_vSliceDistance "0.010"
 	g_vSlices "25.000"
 	g_vTexCoordScale "1"
+
+	DynamicParams
+	{
+		g_vSliceDistance "slicedistance"
+		g_vSlices "sliceamount"
+		g_vTexCoordScale "texcordscale"
+	}
 }
