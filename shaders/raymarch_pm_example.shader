@@ -124,7 +124,6 @@ PS
 			{
 				// red value will increase with each slice.
 				return float3(i,0,0);
-				//return float3(cos(sin(g_flTime *i)),cos(sin(g_flTime *i)),0);
 			}
 
 				vUV += vViewDir * g_vSliceDistance;
