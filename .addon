@@ -1,8 +1,8 @@
 {
-  "Title": "Simple Parallax Occlusion Example",
+  "Title": "Simple Parallax Mapping Example",
   "Type": "content",
   "Org": "quack",
-  "Ident": "sbox-raymarch-pom",
+  "Ident": "sbox-raymarch-pm",
   "Tags": "",
   "Schema": 1,
   "HasAssets": true,
