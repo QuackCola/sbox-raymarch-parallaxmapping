@@ -3,7 +3,7 @@
 //=========================================================================================================================
 HEADER
 {
-	Description = "Example Parallax Occlusion Shader";
+	Description = "Basic Example Parallax Occlusion Shader";
 }
 
 MODES
@@ -96,9 +96,6 @@ PS
 	//
 	// Parameters
 	//
-	SamplerState g_sColorSampler< Filter( ANISO ); AddressU( WRAP ); AddressV( WRAP ); >;
-	CreateInputTexture2D( Color, Srgb, 8, "None", "_color", "Color,0/,0/0", Default4( 1.00, 1.00, 1.00, 1.00 ) );
-	Texture2D g_tColorMap < Channel( RGB, Box( Color ), Srgb ); OutputFormat( DXT5 ); SrgbRead( True ); >;
 	SamplerState g_sHeightSampler< Filter( ANISO ); AddressU( WRAP ); AddressV( WRAP ); >;
 	CreateInputTexture2D( Height, Srgb, 8, "None", "_height", "Height,0/,0/0", Default4( 1.00, 1.00, 1.00, 1.00 ) );
 	Texture2D g_tHeightMap < Channel( RGB, Box( Height ), Srgb ); OutputFormat( DXT5 ); SrgbRead( True ); >;
@@ -135,7 +132,7 @@ PS
 			if(vInputTex.r > 0.1 && vInputTex.g > 0.1 && vInputTex.b > 0.1)
 			{
 				// red value will increase with each slice.
-				return float3(vInputTex.rgb);
+				return float3(i,0,0);
 				//return float3(cos(sin(g_flTime *i)),cos(sin(g_flTime *i)),0);
 			}
 
@@ -145,11 +142,6 @@ PS
 
 		// Raymarch Result
 		return vInputTex;	
-	}
-
-	void MaterialSetup(PixelInput i)
-	{	
-
 	}
 
 	//
@@ -179,13 +171,9 @@ PS
 
 		float2 vUV = i.vTextureCoords * g_vTexCoordScale;
 		float3 vInputTex = Tex2DS(g_tHeightMap,g_sHeightSampler,vUV); // Texture Object
-		float3 vTangentViewDir = normalize(GetTangentViewVector(i));
-		//float3 vTangentViewDir = GetTangentViewVector(i);
-		float3 vColorTex = Tex2DS(g_tColorMap,g_sColorSampler,vUV);
+		float3 vTangentViewDir = GetTangentViewVector(i);
 		
-
 		// Result 
-		m.Albedo = Raymarch(vUV,vTangentViewDir,vColorTex);
 		m.Emission = Raymarch(vUV,vTangentViewDir,vInputTex) * g_vEmissionStrength;
 
 		// make sure we are able to see the result in the editor when in fullbright or ingame when mat_fullbright is set to 1.

@@ -144,11 +144,6 @@ PS
 		return vInputTex;	
 	}
 
-	void MaterialSetup(PixelInput i)
-	{	
-
-	}
-
 	//
 	// Main
 	//

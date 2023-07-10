@@ -2,7 +2,7 @@
 
 Layer0
 {
-	shader "shaders/raymarch_pom_example.shader"
+	shader "shaders/raymarch_pm_example.shader"
 
 	//---- Fog ----
 	g_bFogEnabled "1"
@@ -12,7 +12,7 @@ Layer0
 
 	//---- Variables ----
 	g_vEmissionStrength "0.100"
-	g_vSliceDistance "0.150"
+	g_vSliceDistance "0.010"
 	g_vSlices "25.000"
 	g_vTexCoordScale "1"
 }

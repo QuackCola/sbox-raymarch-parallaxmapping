@@ -2,7 +2,7 @@
 
 Layer0
 {
-	shader "shaders/raymarch_pom_example.shader"
+	shader "shaders/raymarch_pm_example.shader"
 
 	//---- Fog ----
 	g_bFogEnabled "1"
