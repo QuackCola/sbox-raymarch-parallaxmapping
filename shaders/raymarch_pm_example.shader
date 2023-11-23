@@ -54,6 +54,9 @@ struct PixelInput
 {
 	#include "common/pixelinput.hlsl"
 	float3 vPositionOs : TEXCOORD14;
+	float3 vNormalOs : TEXCOORD15;
+	float4 vTangentUOs_flTangentVSign : TANGENT	< Semantic( TangentU_SignV ); >;
+
 };
 
 //=========================================================================================================================
@@ -61,15 +64,16 @@ struct PixelInput
 VS
 {
 	#include "common/vertex.hlsl"
-	//
-	// Main
-	//
-	PixelInput MainVs( INSTANCED_SHADER_PARAMS( VertexInput i ) )
+
+	PixelInput MainVs( VertexInput v )
 	{
-		PixelInput o = ProcessVertex( i );
-		// Add your vertex manipulation functions here	
-		o.vPositionOs = i.vPositionOs.xyz;
-		return FinalizeVertex( o );
+		PixelInput i = ProcessVertex( v );
+		i.vPositionOs = v.vPositionOs.xyz;
+		//i.vColor = v.vColor;
+
+		VS_DecodeObjectSpaceNormalAndTangent( v, i.vNormalOs, i.vTangentUOs_flTangentVSign );
+
+		return FinalizeVertex( i );
 	}
 }
 
@@ -99,24 +103,28 @@ PS
 
 	// TODO : Figure out what's causing the warping when the camera ( aka player ) gets close to the effect surface.
 
-	float3 GetTangentViewVector( PixelInput i )
+	float3 GetTangentViewVector( float3 vPositionWithOffsetWs, float3 vNormalWs, float3 vTangentUWs, float3 vTangentVWs)
 	{
-		float3 vPositionWs = i.vPositionWithOffsetWs.xyz + g_vHighPrecisionLightingOffsetWs.xyz;
+		float3 vPositionWs = vPositionWithOffsetWs.xyz + g_vHighPrecisionLightingOffsetWs.xyz;
         float3 vCameraToPositionDirWs = CalculateCameraToPositionDirWs( vPositionWs.xyz );
-        float3 vNormalWs = normalize( i.vNormalWs.xyz );
-        float3 vTangentUWs = i.vTangentUWs.xyz;
-        float3 vTangentVWs = i.vTangentVWs.xyz;
+        vNormalWs = normalize( vNormalWs.xyz );
        	float3 vTangentViewVector = Vec3WsToTs( vCameraToPositionDirWs.xyz, vNormalWs.xyz, vTangentUWs.xyz, vTangentVWs.xyz );
 		
 		// Result
-		return vTangentViewVector;
+		return vTangentViewVector.xyz;
 	}
-
+ 
 	float3 ParallaxRaymarching(float2 vUV, float3 vViewDir, float3 vInputTex)
 	{
 		//float vRaystep = vViewDir * -1;
 		// g_vSlices is the number of slices. Default is 25.0 
 		// g_vSliceDistance is the distance between each slice. Default is 0.15 
+
+		//  Normalize the incoming view vector to avoid artifacts:
+		//   vView = normalize( vView );
+   		vViewDir = normalize( vViewDir.xyz );
+		//   vLight = normalize( vLight );
+
 		[loop]
 		for(int i = 0; i < g_vSlices; i++)
 		{
@@ -129,12 +137,12 @@ PS
 				//return float3(i,i,i);
 			}
 
-			vUV += vViewDir * g_vSliceDistance;
+			vUV += vViewDir.xyz * g_vSliceDistance;
 			vInputTex = Tex2DS(g_tHeightMap,g_sHeightSampler,vUV.xy);
 		}
 
 		// Raymarch Result
-		return vInputTex;	
+		return vInputTex.xyz;	
 	}
 
 	//
@@ -142,18 +150,9 @@ PS
 	//
 	float4 MainPs( PixelInput i ) : SV_Target0
 	{
-		//
-        // Multiview instancing
-        //
-        uint nView = uint(0);
-        #if (D_MULTIVIEW_INSTANCING)
-                nView = i.nView;
-        #endif
-
-		// Material Setup
-		Material m;
+		Material m = Material::Init();
 		m.Albedo = float3( 0, 0, 0 );
-		m.Normal = TransformNormal( i, float3( 0, 0, 1 ) );
+		m.Normal = TransformNormal( float3( 0, 0, 1 ), i.vNormalWs, i.vTangentUWs, i.vTangentVWs );
 		m.Roughness = 1;
 		m.Metalness = 0;
 		m.AmbientOcclusion = 0;
@@ -162,18 +161,20 @@ PS
 		m.Emission = float3( 0, 0, 0 );
 		m.Transmission = 0;
 
-		float2 vUV = i.vTextureCoords * g_vTexCoordScale;
-		float3 vInputTex = Tex2DS(g_tHeightMap,g_sHeightSampler,vUV); // Texture Object
-		float3 vTangentViewDir = GetTangentViewVector(i);
-		
+		float2 vUV = i.vTextureCoords.xy * g_vTexCoordScale;
+		float4 vInputTex = Tex2DS(g_tHeightMap,g_sHeightSampler,vUV.xy); // Texture Object
+		float3 vTangentViewDir = GetTangentViewVector(i.vPositionWithOffsetWs.xyz,i.vNormalWs.xyz,i.vTangentUWs.xyz,i.vTangentVWs.xyz);
+
+		//	
 		// Result 
-		m.Emission = ParallaxRaymarching(vUV,vTangentViewDir,vInputTex) * g_vEmissionStrength;
+		//
+		m.Emission = ParallaxRaymarching(vUV,vTangentViewDir.xyz,vInputTex.xyz) * g_vEmissionStrength;
 
 		// make sure we are able to see the result in the editor when in fullbright or ingame when mat_fullbright is set to 1.
 		#if S_MODE_TOOLS_VIS
-            m.Albedo = m.Emission;
-            m.Emission = 0;
-        #endif
+		      m.Albedo = m.Emission;
+		      m.Emission = 0;
+		#endif
 
 		return ShadingModelStandard::Shade( i, m );
 	}
