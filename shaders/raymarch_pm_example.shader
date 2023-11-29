@@ -26,7 +26,7 @@ FEATURES
 COMMON
 {
 	#include "common/shared.hlsl"
-	#define S_UNLIT 1
+	//#define S_UNLIT 1
 	#define S_UV2 1
 	#define VS_INPUT_HAS_TANGENT_BASIS 1
 	#define PS_INPUT_HAS_TANGENT_BASIS 1
@@ -85,7 +85,7 @@ PS
 	// Includes
 	//
     #include "common/pixel.hlsl"
-
+	
 	// -------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 	//
@@ -121,9 +121,8 @@ PS
 		// g_vSliceDistance is the distance between each slice. Default is 0.15 
 
 		//  Normalize the incoming view vector to avoid artifacts:
-		//   vView = normalize( vView );
+		//   vView = normalize( vView ); 
    		vViewDir = normalize( vViewDir.xyz );
-		//   vLight = normalize( vLight );
 
 		[loop]
 		for(int i = 0; i < g_vSlices; i++)
@@ -137,12 +136,12 @@ PS
 				//return float3(i,i,i);
 			}
 
-			vUV += vViewDir.xyz * g_vSliceDistance;
-			vInputTex = Tex2DS(g_tHeightMap,g_sHeightSampler,vUV.xy);
+			vUV.xy += (vViewDir.xyz * g_vSliceDistance);
+			vInputTex = Tex2DS(g_tHeightMap,g_sHeightSampler,vUV.xy).xyz;
 		}
 
 		// Raymarch Result
-		return vInputTex.xyz;	
+		return vInputTex;	
 	}
 
 	//
@@ -162,13 +161,13 @@ PS
 		m.Transmission = 0;
 
 		float2 vUV = i.vTextureCoords.xy * g_vTexCoordScale;
-		float4 vInputTex = Tex2DS(g_tHeightMap,g_sHeightSampler,vUV.xy); // Texture Object
+		float4 vInputTex = Tex2DS(g_tHeightMap,g_sHeightSampler,vUV.xy).xyzw; // Texture Object
 		float3 vTangentViewDir = GetTangentViewVector(i.vPositionWithOffsetWs.xyz,i.vNormalWs.xyz,i.vTangentUWs.xyz,i.vTangentVWs.xyz);
 
 		//	
 		// Result 
 		//
-		m.Emission = ParallaxRaymarching(vUV,vTangentViewDir.xyz,vInputTex.xyz) * g_vEmissionStrength;
+		m.Emission = ParallaxRaymarching(vUV.xy,vTangentViewDir.xyz,vInputTex.xyz) * g_vEmissionStrength;
 
 		// make sure we are able to see the result in the editor when in fullbright or ingame when mat_fullbright is set to 1.
 		#if S_MODE_TOOLS_VIS
