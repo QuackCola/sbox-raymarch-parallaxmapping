@@ -35,8 +35,8 @@ COMMON
 	//
 	// Parameters
 	//
-	float g_vSlices < UiType( Slider ); Default(25.0); Range(1,64); UiGroup( "Variables,10/20" ); >; // Limit it to a max of 64 slices.
-	float g_vSliceDistance < UiType( Slider ); Default(0.15); Range(0.001,4); UiGroup( "Variables,10/21" ); >;
+	float g_flSlices < UiType( Slider ); Default(25.0); Range(1,64); UiGroup( "Variables,10/20" ); >; // Limit it to a max of 64 slices.
+	float g_flSliceDistance < UiType( Slider ); Default(0.15); Range(0.001,4); UiGroup( "Variables,10/21" ); >;
 	float g_vTexCoordScale < UiType( Slider ); UiStep( 1 ); Default(1); Range(1,8); UiGroup( "Variables,10/21" ); >;
 	float g_vEmissionStrength < UiType(Slider); Default (0.1); Range(0.1,8); UiGroup("Variables,10/20"); >;
 }
@@ -87,12 +87,9 @@ PS
 	
 	// -------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-	//
-	// Parameters
-	//
-	SamplerState g_sHeightSampler< Filter( ANISO ); AddressU( WRAP ); AddressV( WRAP ); >;
-	CreateInputTexture2D( Height, Srgb, 8, "None", "_height", "Height,0/,0/0", Default4( 1.00, 1.00, 1.00, 1.00 ) );
-	Texture2D g_tHeightMap < Channel( RGB, Box( Height ), Srgb ); OutputFormat( DXT5 ); SrgbRead( True ); >;
+	CreateInputTexture2D( TextureHeight, Linear, 8, "None", "_height", "Parallax", Default4( 1.00, 1.00, 1.00, 0.00 ) );
+	CreateTexture2DWithoutSampler(g_tHeight) < Channel(R, Box(TextureHeight), Linear); OutputFormat(ATI1N); SrgbRead(false); >;
+	float3 g_vColorTint < UiType( Color ); Default3( 1.0, 1.0, 1.0 ); UiGroup( "Color" ); >;
 
 	// -------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -112,31 +109,25 @@ PS
 		// Result
 		return vTangentViewVector.xyz;
 	}
- 
-	float3 ParallaxRaymarching(float2 vUV, float3 vViewDir, float3 vInputTex)
-	{
-		//float vRaystep = vViewDir * -1;
-		// g_vSlices is the number of slices. Default is 25.0 
-		// g_vSliceDistance is the distance between each slice. Default is 0.15 
 
-		//  Normalize the incoming view vector to avoid artifacts:
-		//   vView = normalize( vView ); 
-   		vViewDir = normalize( vViewDir.xyz );
+	float3 SimpleRaymarchParallax(float flSlices, float flSliceDistance, float2 vUV, float3 vTangentViewDir, float vInputTex)
+	{
+		// flSlices Default is 25.0 
+		// flSliceDistance Default is 0.15 
+	
+		//  Normalize the incoming view vector
+   		vTangentViewDir = normalize( vTangentViewDir.xyz );
 
 		[loop]
-		for(int i = 0; i < g_vSlices; i++)
+		for(int i = 0; i < flSlices; i++)
 		{
-			if(vInputTex.r > 0.1 && vInputTex.g > 0.1 && vInputTex.b > 0.1)
+			if(vInputTex > 0.1)
 			{
-				// red value will increase with each slice.
-				return float3(i,0,0);
-
-				// greyscale value will increase with each slice
-				//return float3(i,i,i);
+				return i;
 			}
 
-			vUV.xy += (vViewDir.xyz * g_vSliceDistance);
-			vInputTex = Tex2DS(g_tHeightMap,g_sHeightSampler,vUV.xy).xyz;
+			vUV.xy += (vTangentViewDir.xyz * flSliceDistance);
+			vInputTex = Tex2DS(g_tHeight,TextureFiltering,vUV.xy).x;
 		}
 
 		// Raymarch Result
@@ -160,19 +151,20 @@ PS
 		m.Transmission = 0;
 
 		float2 vUV = i.vTextureCoords.xy * g_vTexCoordScale;
-		float4 vInputTex = Tex2DS(g_tHeightMap,g_sHeightSampler,vUV.xy).xyzw; // Texture Object
 		float3 vTangentViewDir = GetTangentViewVector(i.vPositionWithOffsetWs.xyz,i.vNormalWs.xyz,i.vTangentUWs.xyz,i.vTangentVWs.xyz);
+		float flHeightTex = Tex2DS( g_tHeight, TextureFiltering, vUV).x; //Tex2DS(g_tHeightMap,g_sHeightSampler,vUV.xy).xyzw; // Texture Object
 
 		//	
 		// Result 
 		//
-		m.Emission = ParallaxRaymarching(vUV.xy,vTangentViewDir.xyz,vInputTex.xyz) * g_vEmissionStrength;
-
-		// make sure we are able to see the result in the editor when in fullbright or ingame when mat_fullbright is set to 1.
+		float Raymarched = SimpleRaymarchParallax(g_flSlices,g_flSliceDistance,vUV.xy,vTangentViewDir.xyz,flHeightTex);
+		m.Albedo = float3(Raymarched,Raymarched,Raymarched) * g_vColorTint;
+		m.Emission = float3(Raymarched,Raymarched,Raymarched) * g_vColorTint;
+		
 		#if S_MODE_TOOLS_VIS
 		      m.Albedo = m.Emission;
 		      m.Emission = 0;
-		#endif
+		#endif 
 
 		return ShadingModelStandard::Shade( i, m );
 	}
