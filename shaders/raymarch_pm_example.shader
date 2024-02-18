@@ -35,7 +35,7 @@ COMMON
 	//
 	// Parameters
 	//
-	float g_flSlices < UiType( Slider ); Default(25.0); Range(1,64); UiGroup( "Variables,10/20" ); >; // Limit it to a max of 64 slices.
+	float g_flSlices < UiType( Slider ); Default(25.0); UiStep( 1 ); Range(1,64); UiGroup( "Variables,10/20" ); >; // Limit it to a max of 64 slices.
 	float g_flSliceDistance < UiType( Slider ); Default(0.15); Range(0.001,4); UiGroup( "Variables,10/21" ); >;
 	float g_vTexCoordScale < UiType( Slider ); UiStep( 1 ); Default(1); Range(1,8); UiGroup( "Variables,10/21" ); >;
 	float g_vEmissionStrength < UiType(Slider); Default (0.1); Range(0.1,8); UiGroup("Variables,10/20"); >;
@@ -110,12 +110,11 @@ PS
 		return vTangentViewVector.xyz;
 	}
 
-	float3 SimpleRaymarchParallax(float flSlices, float flSliceDistance, float2 vUV, float3 vTangentViewDir, float vInputTex)
+	float SimpleRaymarchParallax(float flSlices, float flSliceDistance, float2 vUV, float3 vTangentViewDir, float vInputTex)
 	{
 		// flSlices Default is 25.0 
 		// flSliceDistance Default is 0.15 
 	
-		//  Normalize the incoming view vector
    		vTangentViewDir = normalize( vTangentViewDir.xyz );
 
 		[loop]
@@ -132,6 +131,32 @@ PS
 
 		// Raymarch Result
 		return vInputTex;	
+	}
+
+	float3 SimpleRaymarchParallax2(float flSlices, float flSliceDistance, float2 vUV, float3 vTangentViewDir, float vInputTex)
+	{
+		// flSlices Default is 25.0 
+		// flSliceDistance Default is 0.15 
+
+   		vTangentViewDir = normalize( vTangentViewDir.xyz );
+
+		float3 vResult;
+
+		[loop]
+		for(int i = 0; i < flSlices; i++)
+		{
+			if(vInputTex > 0.1)
+			{
+				vResult = float3(i,0,0);
+				return vResult;
+			}
+
+			vUV.xy += (vTangentViewDir * flSliceDistance);
+			vInputTex = Tex2DS(g_tHeight,TextureFiltering,vUV.xy).x;
+		}
+
+		// Raymarch Result
+		return vResult;
 	}
 
 	//
@@ -157,9 +182,10 @@ PS
 		//	
 		// Result 
 		//
-		float Raymarched = SimpleRaymarchParallax(g_flSlices,g_flSliceDistance,vUV.xy,vTangentViewDir.xyz,flHeightTex);
-		m.Albedo = float3(Raymarched,Raymarched,Raymarched) * g_vColorTint;
-		m.Emission = float3(Raymarched,Raymarched,Raymarched) * g_vColorTint;
+
+		m.Albedo = SimpleRaymarchParallax2(g_flSlices,g_flSliceDistance,vUV.xy,vTangentViewDir,flHeightTex);
+	
+		//m.Emission = float3(Raymarched,Raymarched,Raymarched) * g_vColorTint;
 		
 		#if S_MODE_TOOLS_VIS
 		      m.Albedo = m.Emission;
