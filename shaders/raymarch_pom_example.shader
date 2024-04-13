@@ -105,6 +105,9 @@ PS
 	//
 	// Functions
 	//
+
+	// TODO : Figure out whats cuasing the warping when the camera ( aka player ) gets close to the effect surface. And if its avoidable.
+
 	float3 GetTangentViewVector( PixelInput i )
 	{
 		float3 vPositionWs = i.vPositionWithOffsetWs.xyz + g_vHighPrecisionLightingOffsetWs.xyz;
@@ -141,6 +144,11 @@ PS
 		return vInputTex;	
 	}
 
+	void MaterialSetup(PixelInput i)
+	{	
+
+	}
+
 	//
 	// Main
 	//
@@ -154,6 +162,7 @@ PS
                 nView = i.nView;
         #endif
 
+		// Material Setup
 		Material m;
 		m.Albedo = float3( 0, 0, 0 );
 		m.Normal = TransformNormal( i, float3( 0, 0, 1 ) );
@@ -165,11 +174,10 @@ PS
 		m.Emission = float3( 0, 0, 0 );
 		m.Transmission = 0;
 
-
 		float2 vUV = i.vTextureCoords * g_vTexCoordScale;
 		float3 vInputTex = Tex2DS(g_tHeightMap,g_sHeightSampler,vUV); // Texture Object
-		//float3 vTangentViewDir = normalize(GetTangentViewVector(i));
-		float3 vTangentViewDir = GetTangentViewVector(i);
+		float3 vTangentViewDir = normalize(GetTangentViewVector(i));
+		//float3 vTangentViewDir = GetTangentViewVector(i);
 		
 
 		// Result 
