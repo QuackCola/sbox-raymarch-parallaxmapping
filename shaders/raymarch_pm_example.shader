@@ -70,6 +70,12 @@ VS
 		PixelInput i = ProcessVertex( v );
 		i.vPositionOs = v.vPositionOs.xyz;
 
+		float3 worldVertexPos = i.vPositionWs.xyz;
+		float3 worldViewDir = worldVertexPos - g_vCameraPositionWs;
+
+
+
+
 		VS_DecodeObjectSpaceNormalAndTangent( v, i.vNormalOs, i.vTangentUOs_flTangentVSign );
 
 		return FinalizeVertex( i );
@@ -85,6 +91,8 @@ PS
 	//
     #include "common/pixel.hlsl"
 	
+	//#define Tex2DLevelWithOffset( result, name, uv, flLevel, flXOfs, flYOfs, flInvTexWidth, flInvTexHeight ) result = tex2Dlod( name, float4( ( uv ).xy + float2( ( flXOfs ) * ( flInvTexWidth ), ( flYOfs ) * ( flInvTexHeight ) ), 0.0, flLevel ) )
+
 	// -------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 	CreateInputTexture2D( TextureHeight, Linear, 8, "None", "_height", "Parallax", Default4( 1.00, 1.00, 1.00, 0.00 ) );
@@ -110,33 +118,36 @@ PS
 		return vTangentViewVector.xyz;
 	}
 
-	float SimpleRaymarchParallax(float flSlices, float flSliceDistance, float2 vUV, float3 vTangentViewDir, float vInputTex)
+	float SimpleRaymarchParallax(float flSlices, float flSliceDistance, float2 vUV, float3 vTangentViewDir, Texture2D vHeight)
 	{
 		// flSlices Default is 25.0 
 		// flSliceDistance Default is 0.15 
 	
+		float flHeightTex = Tex2DS( vHeight, TextureFiltering, vUV).x; 
+
    		vTangentViewDir = normalize( vTangentViewDir.xyz );
 
 		[loop]
 		for(int i = 0; i < flSlices; i++)
 		{
-			if(vInputTex > 0.1)
+			if(flHeightTex > 0.1)
 			{
 				return i;
 			}
 
 			vUV.xy += (vTangentViewDir.xyz * flSliceDistance);
-			vInputTex = Tex2DS(g_tHeight,TextureFiltering,vUV.xy).x;
+			vInputTex = Tex2DS(vHeight,TextureFiltering,vUV.xy).x;
 		}
-
 		// Raymarch Result
 		return vInputTex;	
 	}
 
-	float3 SimpleRaymarchParallax2(float flSlices, float flSliceDistance, float2 vUV, float3 vTangentViewDir, float vInputTex)
+	float3 SimpleRaymarchParallax2(float flSlices, float flSliceDistance, float2 vUV, float3 vTangentViewDir, Texture2D vHeight)
 	{
 		// flSlices Default is 25.0 
 		// flSliceDistance Default is 0.15 
+
+		float flHeightTex = Tex2DS( vHeight, TextureFiltering, vUV).x; 
 
    		vTangentViewDir = normalize( vTangentViewDir.xyz );
 
@@ -145,14 +156,41 @@ PS
 		[loop]
 		for(int i = 0; i < flSlices; i++)
 		{
-			if(vInputTex > 0.1)
+			if(flHeightTex > 0.1)
 			{
 				vResult = float3(i,0,0);
 				return vResult;
 			}
 
 			vUV.xy += (vTangentViewDir * flSliceDistance);
-			vInputTex = Tex2DS(g_tHeight,TextureFiltering,vUV.xy).x;
+			vInputTex = Tex2DS(vHeight,TextureFiltering,vUV.xy).x;
+		}
+
+		// Raymarch Result
+		return vResult;
+	}
+
+	float SimpleParallaxGreyscale(float flSlices, float flSliceDistance, float2 vUV, float3 vTangentViewDir, Texture2D vHeight)
+	{
+   		vTangentViewDir = vTangentViewDir.xyz;
+
+		float flHeightTex = Tex2DS( vHeight, TextureFiltering, vUV).x; 
+
+		float3 vResult;
+		const float flIncrement = 0.1;
+
+		[loop]
+		for(int i = 0; i < flSlices; i++)
+		{
+			if(flHeightTex > 0.1)
+			{	
+				float vIncColor = i + flIncrement;
+				vResult = float3(vIncColor,vIncColor,vIncColor);
+				return vResult;
+			}
+
+			vUV.xy += (vTangentViewDir * flSliceDistance);
+			vInputTex = Tex2DS(vHeight,TextureFiltering,vUV.xy).x;
 		}
 
 		// Raymarch Result
@@ -177,14 +215,13 @@ PS
 
 		float2 vUV = i.vTextureCoords.xy * g_vTexCoordScale;
 		float3 vTangentViewDir = GetTangentViewVector(i.vPositionWithOffsetWs.xyz,i.vNormalWs.xyz,i.vTangentUWs.xyz,i.vTangentVWs.xyz);
-		float flHeightTex = Tex2DS( g_tHeight, TextureFiltering, vUV).x; //Tex2DS(g_tHeightMap,g_sHeightSampler,vUV.xy).xyzw; // Texture Object
 
 		//	
 		// Result 
 		//
 
-		m.Albedo = SimpleRaymarchParallax2(g_flSlices,g_flSliceDistance,vUV.xy,vTangentViewDir,flHeightTex);
-	
+		m.Albedo = SimpleRaymarchParallax2(g_flSlices,g_flSliceDistance,vUV.xy,vTangentViewDir,g_tHeight);
+
 		//m.Emission = float3(Raymarched,Raymarched,Raymarched) * g_vColorTint;
 		
 		#if S_MODE_TOOLS_VIS

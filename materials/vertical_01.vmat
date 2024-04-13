@@ -7,19 +7,16 @@ Layer0
 	//---- Fog ----
 	g_bFogEnabled "1"
 
-	//---- Height ----
-	Height "textures/vertical_01_height.psd"
+	//---- Parallax ----
+	TextureHeight "textures/vertical_01_height.psd"
 
 	//---- Variables ----
-	g_vEmissionStrength "0.100"
-	g_vSliceDistance "0.150"
-	g_vSlices "25.000"
+	g_flSliceDistance "0.150"
+	g_flSlices "25"
 	g_vTexCoordScale "1"
 
 	DynamicParams
 	{
-		g_vSliceDistance "slicedistance"
-		g_vSlices "sliceamount"
 		g_vTexCoordScale "texcordscale"
 	}
 }
