@@ -175,7 +175,7 @@ PS
 		// Result 
 		m.Emission = Raymarch(vUV,vTangentViewDir,vInputTex) * g_vEmissionStrength;
 
-		// make sure we are able to see the result in the editor when in fullbright.
+		// make sure we are able to see the result in the editor when in fullbright or ingame when mat_fullbright is set to 1.
 		#if S_MODE_TOOLS_VIS
             m.Albedo = m.Emission;
             m.Emission = 0;
