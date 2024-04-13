@@ -4,9 +4,6 @@ Layer0
 {
 	shader "shaders/raymarch_pm_example.shader"
 
-	//---- Color ----
-	g_vColorTint "[1.000000 0.000000 0.000000 0.000000]"
-
 	//---- Fog ----
 	g_bFogEnabled "1"
 
@@ -14,9 +11,9 @@ Layer0
 	TextureHeight "textures/s2_logo_height.psd"
 
 	//---- Variables ----
-	g_flSliceDistance "0.150"
-	g_flSlices "1.783"
-	g_vTexCoordScale "1"
+	g_flSliceDistance "0.100"
+	g_flSlices "6"
+	g_vTexCoordScale "4"
 
 	DynamicParams
 	{
