@@ -3,7 +3,7 @@
 //=========================================================================================================================
 HEADER
 {
-	Description = "Example Parallax Occlusion Shader";
+	Description = "Basic Example Parallax Occlusion Shader";
 }
 
 MODES
@@ -176,10 +176,8 @@ PS
 
 		float2 vUV = i.vTextureCoords * g_vTexCoordScale;
 		float3 vInputTex = Tex2DS(g_tHeightMap,g_sHeightSampler,vUV); // Texture Object
-		float3 vTangentViewDir = normalize(GetTangentViewVector(i));
-		//float3 vTangentViewDir = GetTangentViewVector(i);
+		float3 vTangentViewDir = GetTangentViewVector(i);
 		
-
 		// Result 
 		m.Emission = Raymarch(vUV,vTangentViewDir,vInputTex) * g_vEmissionStrength;
 
