@@ -1,19 +1,34 @@
 {
-  "Title": "Simple Parallax Mapping Example",
-  "Type": "content",
-  "Org": "quack",
-  "Ident": "sbox-raymarch-pm",
-  "Tags": "",
+  "Title": "ParallaxMapping Testbed",
+  "Type": "game",
+  "Org": "local",
+  "Ident": "sbox_raymarch_parallaxmapping",
+  "Tags": null,
   "Schema": 1,
   "HasAssets": true,
   "AssetsPath": "",
   "Resources": null,
-  "MenuResources": null,
-  "HasCode": false,
-  "CodePath": "",
+  "MenuResources": "*",
+  "HasCode": true,
+  "CodePath": "/code/",
   "PackageReferences": [],
   "EditorReferences": null,
   "Metadata": {
-    "ProjectTemplate": null
+    "MaxPlayers": 64,
+    "MinPlayers": 1,
+    "TickRate": 50,
+    "GameNetworkType": "Multiplayer",
+    "MapSelect": "Unrestricted",
+    "MapList": [
+      "facepunch.flatgrass"
+    ],
+    "RankType": "None",
+    "PerMapRanking": false,
+    "LeaderboardType": "None",
+    "CsProjName": "",
+    "StartupScene": "scenes/parallaxmapping_testbed.scene",
+    "ProjectTemplate": null,
+    "MapStartupScene": null,
+    "LaunchMode": "Normal"
   }
 }
