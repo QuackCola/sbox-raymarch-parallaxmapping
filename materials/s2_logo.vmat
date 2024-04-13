@@ -1,0 +1,25 @@
+// THIS FILE IS AUTO-GENERATED
+
+Layer0
+{
+	shader "shaders/raymarch.shader"
+
+	//---- Fog ----
+	g_bFogEnabled "1"
+
+	//---- Height ----
+	Height "textures/s2_logo_height.psd"
+
+	//---- Variables ----
+	g_vEmissionStrength "0.100"
+	g_vSliceDistance "0.042"
+	g_vSlices "25.000"
+	g_vTexCoordScale "1"
+
+	DynamicParams
+	{
+		g_vSliceDistance "slicedistance"
+		g_vSlices "sliceamount"
+		g_vTexCoordScale "texcordscale"
+	}
+}
