@@ -99,13 +99,20 @@ PS
 	CreateTexture2DWithoutSampler(g_tHeight) < Channel(R, Box(TextureHeight), Linear); OutputFormat(ATI1N); SrgbRead(false); >;
 	float3 g_vColorTint < UiType( Color ); Default3( 1.0, 1.0, 1.0 ); UiGroup( "Color" ); >;
 
+
+	// Setup height 
+	CreateInputTexture2D( HeightTextureSampler, Linear, 8, "None", "_height", "Parallax", Default4( 1.00, 1.00, 1.00, 0.00 ) );
+	Texture2D g_tHeight2;
+	SamplerState HeightTextureSampler < Filter( POINT ); AddressU( CLAMP ); AddressV( CLAMP ); >;
+	// ------------
+	
 	// -------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 	//
 	// Functions
 	//
 
-	// TODO : Figure out what's causing the warping when the camera ( aka player ) gets close to the effect surface.
+	// TODO : Repalce the tex2D Macros with the normal hlsl stuff.
 
 	float3 GetTangentViewVector( float3 vPositionWithOffsetWs, float3 vNormalWs, float3 vTangentUWs, float3 vTangentVWs)
 	{
@@ -136,10 +143,10 @@ PS
 			}
 
 			vUV.xy += (vTangentViewDir.xyz * flSliceDistance);
-			vInputTex = Tex2DS(vHeight,TextureFiltering,vUV.xy).x;
+			flHeightTex = Tex2DS(vHeight,TextureFiltering,vUV.xy).x; 
 		}
 		// Raymarch Result
-		return vInputTex;	
+		return flHeightTex;	
 	}
 
 	float3 SimpleRaymarchParallax2(float flSlices, float flSliceDistance, float2 vUV, float3 vTangentViewDir, Texture2D vHeight)
@@ -148,7 +155,7 @@ PS
 		// flSliceDistance Default is 0.15 
 
 		float flHeightTex = Tex2DS( vHeight, TextureFiltering, vUV).x; 
-
+							
    		vTangentViewDir = normalize( vTangentViewDir.xyz );
 
 		float3 vResult;
@@ -163,7 +170,7 @@ PS
 			}
 
 			vUV.xy += (vTangentViewDir * flSliceDistance);
-			vInputTex = Tex2DS(vHeight,TextureFiltering,vUV.xy).x;
+			flHeightTex = Tex2DS(vHeight,TextureFiltering,vUV.xy).x;
 		}
 
 		// Raymarch Result
@@ -190,7 +197,7 @@ PS
 			}
 
 			vUV.xy += (vTangentViewDir * flSliceDistance);
-			vInputTex = Tex2DS(vHeight,TextureFiltering,vUV.xy).x;
+			flHeightTex = Tex2DS(vHeight,TextureFiltering,vUV.xy).x;
 		}
 
 		// Raymarch Result
@@ -212,14 +219,17 @@ PS
 		m.Opacity = 1;
 		m.Emission = float3( 0, 0, 0 );
 		m.Transmission = 0;
-
+		
 		float2 vUV = i.vTextureCoords.xy * g_vTexCoordScale;
+
+		float3 vtesttex = g_tHeight2.Sample(HeightTextureSampler, vUV).xyz;
+		
 		float3 vTangentViewDir = GetTangentViewVector(i.vPositionWithOffsetWs.xyz,i.vNormalWs.xyz,i.vTangentUWs.xyz,i.vTangentVWs.xyz);
 
 		//	
 		// Result 
 		//
-
+		
 		m.Albedo = SimpleRaymarchParallax2(g_flSlices,g_flSliceDistance,vUV.xy,vTangentViewDir,g_tHeight);
 
 		//m.Emission = float3(Raymarched,Raymarched,Raymarched) * g_vColorTint;
