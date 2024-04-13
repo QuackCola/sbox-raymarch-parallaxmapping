@@ -3,10 +3,10 @@
     "Allowed": true,
     "Enabled": false,
     "ProjectConfig": {
-      "Title": "pom_shadertest",
+      "Title": "parallaxmapping_shadertest",
       "Type": "map",
       "Org": "local",
-      "Ident": "pom_shadertest",
+      "Ident": "parallaxmapping_shadertest",
       "Tags": null,
       "Schema": 0,
       "HasAssets": false,
@@ -18,7 +18,7 @@
       "PackageReferences": [],
       "EditorReferences": [],
       "Metadata": {
-        "SingleAssetSource": "maps/pom_shadertest.vmap"
+        "SingleAssetSource": "maps/parallaxmapping_shadertest.vmap"
       }
     }
   }
