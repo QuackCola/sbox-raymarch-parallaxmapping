@@ -1,0 +1,18 @@
+// THIS FILE IS AUTO-GENERATED
+
+Layer0
+{
+	shader "shaders/raymarch_pom_example.shader"
+
+	//---- Fog ----
+	g_bFogEnabled "1"
+
+	//---- Height ----
+	Height "textures/courner_01_height.psd"
+
+	//---- Variables ----
+	g_vEmissionStrength "0.100"
+	g_vSliceDistance "0.150"
+	g_vSlices "25.000"
+	g_vTexCoordScale "1"
+}
