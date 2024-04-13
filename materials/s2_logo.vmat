@@ -12,7 +12,7 @@ Layer0
 
 	//---- Variables ----
 	g_vEmissionStrength "0.100"
-	g_vSliceDistance "0.042"
+	g_vSliceDistance "0.150"
 	g_vSlices "25.000"
 	g_vTexCoordScale "1"
 
