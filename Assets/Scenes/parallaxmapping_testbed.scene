@@ -3,12 +3,14 @@
   "GameObjects": [
     {
       "__guid": "bfc59c12-1ed2-4f91-8956-a95a315eac3c",
+      "Flags": 0,
       "Name": "Sun",
       "Position": "-32,0.000005486069,128",
       "Rotation": "-0.0000000377291,0.6329893,0.0000000000000005185386,0.774161",
       "Tags": "light_directional,light",
       "Enabled": true,
       "NetworkMode": 2,
+      "NetworkInterpolation": true,
       "Components": [
         {
           "__type": "Sandbox.DirectionalLight",
@@ -23,16 +25,18 @@
     },
     {
       "__guid": "00344a8c-fa5e-45ae-b12a-10bb781a1dc3",
+      "Flags": 0,
       "Name": "2D Skybox",
       "Position": "0,-0,64",
       "Tags": "skybox",
       "Enabled": true,
       "NetworkMode": 2,
+      "NetworkInterpolation": true,
       "Components": [
         {
           "__type": "Sandbox.SkyBox2D",
           "__guid": "4d963f51-270b-4e87-83ba-90c8424fbfef",
-          "SkyMaterial": "materials/skybox/light_test_sky_sunny02.vmat",
+          "SkyMaterial": "materials/skybox/skybox_day_01.vmat",
           "Tint": "1,1,1,1"
         },
         {
@@ -58,10 +62,12 @@
     },
     {
       "__guid": "6ad70641-3c6c-4402-9c85-9a4969af4764",
+      "Flags": 0,
       "Name": "Plane",
       "Scale": "16,16,3",
       "Enabled": true,
       "NetworkMode": 2,
+      "NetworkInterpolation": true,
       "Components": [
         {
           "__type": "Sandbox.ModelRenderer",
@@ -85,12 +91,14 @@
     },
     {
       "__guid": "3c2490ef-54a0-49bb-8f13-490e40aa51d1",
+      "Flags": 0,
       "Name": "Cube",
       "Position": "124.5026,-27.93184,63.99999",
       "Rotation": "-0.00000001063388,-0.00000001476198,0.5942693,-0.8042663",
       "Scale": "2,2,2",
       "Enabled": true,
       "NetworkMode": 2,
+      "NetworkInterpolation": true,
       "Components": [
         {
           "__type": "Sandbox.ModelRenderer",
@@ -129,12 +137,14 @@
     },
     {
       "__guid": "85963739-706f-4439-b268-5cda7a549b93",
+      "Flags": 0,
       "Name": "Cube (1)",
       "Position": "128.0255,64.15338,63.99999",
       "Rotation": "0.0000000168084,-0.000000006962269,0.646419,0.7629828",
       "Scale": "0.5632889,0.5632889,0.5632889",
       "Enabled": true,
       "NetworkMode": 2,
+      "NetworkInterpolation": true,
       "Components": [
         {
           "__type": "Sandbox.ModelRenderer",
@@ -173,11 +183,13 @@
     },
     {
       "__guid": "3ee1c9f4-07be-4e0b-8b23-67bee2d8ec8a",
+      "Flags": 0,
       "Name": "Camera",
       "Position": "-832,0,352",
       "Rotation": "-0.00000002061293,0.2079117,0.000000004381413,0.9781476",
       "Enabled": true,
       "NetworkMode": 2,
+      "NetworkInterpolation": true,
       "Components": [
         {
           "__type": "Sandbox.CameraComponent",
@@ -206,9 +218,9 @@
   ],
   "SceneProperties": {
     "FixedUpdateFrequency": 50,
-    "Lerping": true,
     "MaxFixedUpdates": 5,
     "NetworkFrequency": 60,
+    "NetworkInterpolation": true,
     "ThreadedAnimation": true,
     "TimeScale": 1,
     "UseFixedUpdate": true,
@@ -227,8 +239,8 @@
   },
   "Title": "minimal",
   "Description": "",
-  "LastSaved": "2024-04-18T07:20:00.8418498-04:00",
+  "LastSaved": "2024-06-05T11:55:11.8956223-04:00",
   "ResourceVersion": 1,
-  "__version": 1,
-  "__references": []
+  "__references": [],
+  "__version": 1
 }
