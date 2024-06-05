@@ -28,8 +28,6 @@ COMMON
 	#include "common/shared.hlsl"
 	//#define S_UNLIT 1
 	#define S_UV2 1
-	#define VS_INPUT_HAS_TANGENT_BASIS 1
-	#define PS_INPUT_HAS_TANGENT_BASIS 1
 	#define CUSTOM_MATERIAL_INPUTS
 
 	//
