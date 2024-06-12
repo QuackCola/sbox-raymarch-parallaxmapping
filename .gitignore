@@ -1,7 +1,9 @@
 # Folders
+
 screenshots/
 
 # Auto-generated code editor files
+
 .vs/*
 .vscode/*
 *.csproj
@@ -15,6 +17,7 @@ code/obj/*
 *.sln
 
 # Auto-generated asset related files
+
 *.generated.*
 *.*_c
 *.los
