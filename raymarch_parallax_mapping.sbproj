@@ -1,0 +1,16 @@
+{
+  "Title": "Raymarch Parallax Mapping",
+  "Type": "library",
+  "Org": "local",
+  "Ident": "raymarch_parallax_mapping",
+  "Schema": 1,
+  "IncludeSourceFiles": false,
+  "Resources": null,
+  "PackageReferences": [],
+  "EditorReferences": null,
+  "Mounts": null,
+  "IsStandaloneOnly": false,
+  "Metadata": {
+    "CsProjName": ""
+  }
+}
